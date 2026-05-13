@@ -4,108 +4,78 @@
 
 The internet has an expiration date.
 
-Not because your password is `hunter2`.
-Not because some teenager installed Kali Linux.
-But because most of modern security is built on one very convenient assumption:
+Not because your password is `hello123`.
+Not because some teenager installed Kali Linux and watched how to vibe code pen testing attacks.
 
-[ON SCREEN:  
-easy one way  
+But because most of modern security is built on a very convenient assumption:
+
+[ON SCREEN:
+easy one way
 nightmare in reverse]
 
 Multiplying two giant primes together is easy.
 
 Going backwards and finding the primes?
 
-Good luck. Your CPU is now a space heater.
+Very hard.
 
 That asymmetry is why RSA works.
 
-And similar math protects TLS, wallets, secure messaging, bank logins, government systems, and basically every serious encrypted connection on Earth.
+And similar "easy forward, awful backward" math protects TLS, certificates, wallets, secure messaging, bank logins, government systems, and basically every serious encrypted connection on Earth.
 
-Then in 1994, Peter Shor showed up and ruined the vibe.
+Then in 1994, Peter Shor showed up and opened the most cursed Jira ticket in cryptography.
 
-He proved that a powerful enough quantum computer could break the exact kind of math used by RSA, Diffie-Hellman, and elliptic curve cryptography.
+He proved that a powerful enough quantum computer could break the kind of math used by RSA, Diffie-Hellman, and elliptic curve cryptography.
 
-[ON SCREEN:  
-RSA / DH / ECC  
+[ON SCREEN:
+RSA / DH / ECC
 theoretically breakable]
+
+In today’s video, we’re diving into post-quantum cryptography — the technology designed to protect the internet from quantum computers that could one day break modern encryption. We’ll look at what actually breaks, what stays secure, basically what you need to know to follow the latest developments in the field to understand how close we really are to a quantum threat.
+
 
 To be clear:
 
 Bitcoin does not die next Tuesday.
-Your bank is not being brute-forced by a refrigerator with qubits.
+Your bank is not being brute-forced either in the next couple months.
 
-But there is one phrase that makes this problem way less funny:
+But there is one phrase that makes "we'll deal with it later" sound extremely unemployed:
 
-[ON SCREEN:  
-HARVEST NOW  
+[ON SCREEN:
+HARVEST NOW
 DECRYPT LATER]
 
-If somebody records encrypted traffic today, they might decrypt it years later when the hardware finally exists.
+If somebody records encrypted traffic today, they may be able to decrypt it years later when the hardware finally exists.
 
-So the question is not:
+So the real question is not:
 
 "Will quantum computers delete the internet tomorrow?"
 
-The question is:
+The real question is:
 
-"How much time do we actually have?"
+"Will we migrate the internet before the deadline stops being imaginary?"
 
-And recently, that question got uncomfortable.
+And Ethereum is one of the best stress tests for that question.
 
-## 0:45 - Why Everyone Suddenly Cares
+Now, a lot of you probably don’t care about cryptocurrencies. Some of you would probably celebrate if it disappeared tomorrow. Fair enough. But Ethereum is still one of the largest public cryptographic systems ever built — securing wallets, smart contracts, bridges, validators, and billions of dollars completely in the open. And that makes it a fascinating case study for a post-quantum world. Because if quantum computers ever become a real threat, systems like this won’t get a private maintenance window. They’ll have to survive the upgrade live, on the internet, while attackers are watching.
 
-For years, the default answer to quantum panic was:
 
-"Yeah, Shor's algorithm exists, but the hardware is nowhere close."
+## 1:05 - The Math Bet
 
-Which was true.
-
-Then a few new papers dropped.
-
-One from Google Quantum AI.
-Another from researchers connected to Oratomic, Caltech, Berkeley, Stanford, and Ethereum research.
-
-And suddenly the estimated cost of attacking real cryptography looked a lot less impossible.
-
-Not easy.
-Not solved.
-But less comfortably fake.
-
-Justin Drake from the Ethereum Foundation called the results monumental and said his confidence in Q-Day by around 2032 went way up, estimating at least around a 10% chance.
-
-Now, 2032 is not a prophecy.
-
-It is not "quantum apocalypse confirmed."
-
-But in security, a 10% chance of global cryptographic pain is not a rounding error.
-
-Especially when migrating the internet takes years.
-
-Google Chrome has already been targeting post-quantum readiness around 2029.
-NIST has standardized post-quantum algorithms.
-Cloud providers and browsers are testing hybrid cryptography right now.
-
-The industry is not doing this because it enjoys paperwork.
-
-It is doing this because waiting until the threat is obvious is how you speedrun a disaster.
-
-## 1:35 - The Basic Threat
-
-Let's make the threat painfully simple.
+But before . Let's make the threat painfully simple.
 
 RSA works because multiplication is easy and factoring is hard.
 
 If I give you:
 
-[ON SCREEN:  
+[ON SCREEN:
 7 x 13 = 91]
 
 you can check it instantly.
 
 But if I only give you:
 
-[ON SCREEN:  
+[ON SCREEN:
 91 = ? x ?]
 
 now you have to reverse it.
@@ -114,7 +84,7 @@ Still easy for 91.
 
 But RSA does this with numbers hundreds or thousands of bits long.
 
-[ON SCREEN:  
+[ON SCREEN:
 239847239847239847...]
 
 At that size, classical computers basically have to grind through an absurd search space.
@@ -125,7 +95,7 @@ Shor's algorithm is the cheat code.
 
 It uses quantum mechanics to find hidden mathematical structure in the problem, which lets a powerful enough quantum computer factor large numbers dramatically faster.
 
-[ON SCREEN:  
+[ON SCREEN:
 n -> p and q]
 
 If that becomes practical, RSA breaks.
@@ -134,23 +104,195 @@ And not just RSA.
 
 Diffie-Hellman and many elliptic curve systems are vulnerable too.
 
-That means an attacker could potentially:
+Developer translation:
 
-- impersonate websites
-- break key exchanges
-- spoof certificates
-- recover private keys
-- decrypt data that was recorded years earlier
+[ON SCREEN:
+old public-key crypto
+has a quantum-shaped hole]
 
-Again:
+This matters for TLS handshakes, certificates, VPNs, signing keys, encrypted archives, secure messaging, software updates, and crypto wallets.
 
-We do not currently have a quantum computer that can do this at real-world scale.
+And this is where Ethereum enters the story early.
 
-But cryptography has a planning problem.
+Ethereum and Bitcoin wallets mostly rely on ECDSA over secp256k1.
 
-If the data needs to stay secret for 10, 20, or 30 years, then "not broken today" is not good enough.
+So when researchers estimate the cost of attacking secp256k1, they are not studying random math trivia.
 
-## 2:35 - The Defense
+They are studying the curve behind a huge amount of digital asset infrastructure.
+
+So if a future quantum computer can recover a private key from an exposed public key, then old assumptions about signatures start looking very expired.
+
+## 2:20 - The Part That Changed
+
+For years, the default answer to quantum panic was:
+
+"Yes, Shor's algorithm exists, but the hardware is nowhere close."
+
+Which was true.
+
+And might still be true for a while.
+
+But the vibe changed because the resource estimates started moving in the wrong direction.
+
+Recent work from Google Quantum AI and collaborators looked at attacking 256-bit elliptic curve cryptography, including secp256k1.
+
+One estimate showed a circuit using fewer than:
+
+[ON SCREEN:
+1,200 logical qubits
+90 million Toffoli gates]
+
+Same paper, second tradeoff:
+
+[ON SCREEN:
+1,450 logical qubits
+70 million Toffoli gates]
+
+So if you hear 1.2k or 1.5k, that is not a contradiction.
+
+It is two versions of the attack:
+
+fewer qubits with more gates,
+or more qubits with fewer gates.
+
+Now pause.
+
+This is the part where quantum computing vocabulary tries to DDoS the viewer, because you have no clue what that means. So lets give it some context.
+
+A physical qubit is the actual hardware qubit.
+
+Tiny. Fragile. Annoying.
+
+It loses information.
+It makes errors.
+It has the emotional stability of a production database during a Friday deploy.
+
+A logical qubit is made by combining many physical qubits with error correction so the computer gets one more reliable qubit.
+
+[ON SCREEN:
+many noisy qubits
+-> 1 useful qubit]
+
+So "1,200 logical qubits" cannot be confused with physical qubits.
+
+Depending on the hardware quality and error-correction code, one logical qubit might require many physical qubits.
+
+And for context, one of the strongest public quantum computers today has demonstrated around 94 logical qubits.
+
+[ON SCREEN:
+today: ~94 logical qubits
+attack estimate: ~1,200-1,450 logical qubits]
+
+So we are not there yet.
+
+But the gap is no longer "science fiction numbers."
+
+And Toffoli gates? What the heck are those? 
+
+[ON SCREEN:
+Toffoli gates
+= quantum math steps]
+
+They are one way researchers count the reversible arithmetic needed to run attacks like Shor's algorithm.
+
+What?
+
+So think about this way: Qubits measure how big the machine is.
+Gates measure how much reliable work it has to survive.
+
+  more Toffoli gates means
+  = longer computation
+  = more chances for errors
+  = stronger error correction
+  = more physical qubits per logical qubit
+
+So the more Toffoli gates you need, the longer the computation has to survive, and the more physical qubits you may
+need to protect each logical qubit.
+
+So I hope now you kind of understand the measurements used to estimate when quantum computers could break modern public-key cryptography.
+
+Based on the paper I mentioned earlier, the estimate is roughly 1,200 to 1,450 logical qubits, depending on the circuit tradeoff, while before we expected these numbers to be much higher.
+
+## 3:40 - Q-Day Is A Calendar Problem
+
+This is where people usually ask:
+
+"Okay, but when?"
+
+And the honest answer is:
+
+nobody knows.
+
+But we do have guesses.
+
+Justin Drake from the Ethereum Foundation recently put a number on it.
+
+After the newer Google Quantum AI work on secp256k1, he said his confidence in Q-Day by 2032 went way up.
+
+Not "Q-Day is definitely 2032."
+
+More like:
+
+[ON SCREEN:
+Justin Drake estimate
+Q-Day by 2032:
+at least ~10% chance]
+
+As in:
+
+at least a 10% chance that a quantum computer can recover a secp256k1 private key from an exposed public key by 2032.
+
+Which is a very specific way of saying:
+
+[ON SCREEN:
+Bitcoin / Ethereum-style signatures
+could become recoverable]
+
+Why?
+
+Because the attack estimates are falling, hardware is improving, and the money cannon is fully online.
+
+[ON SCREEN:
+attack cost down
+hardware up
+funding up]
+
+And Drake is not out on an island here.
+
+Steve Brierley, the founder of Riverlane, has also used 2032 as his personal estimate.
+
+Google is targeting 2029 for parts of its post-quantum migration.
+
+Scott Aaronson has said transitioning by then is wise because powerful enough quantum computers are plausible.
+
+So the serious-people range is not:
+
+"never."
+
+It is more like:
+
+[ON SCREEN:
+maybe early 2030s
+maybe later]
+
+And then there is the other camp.
+
+Adam Back from Blockstream argues the Bitcoin quantum threat is more like 20 to 40 years away.
+
+Which is also reasonable, because a cheaper attack estimate is not the same thing as a working machine.
+
+That is the whole problem.
+
+So the honest answer is still:
+
+nobody knows.
+
+But if your migration takes years, "maybe 2032" is not a date.
+
+It is a deadline wearing a fake mustache.
+
+
+## 4:55 - The Defense
 
 So what do we do?
 
@@ -158,30 +300,36 @@ We migrate before the boss fight.
 
 That is post-quantum cryptography.
 
-Instead of using math based on factoring or elliptic curves, post-quantum systems use problems that we do not currently know how to break efficiently, even with quantum computers.
+[ON SCREEN:
+PQC
+new locks before the old locks melt]
+
+Instead of relying on factoring or elliptic curves, post-quantum systems use problems that we do not currently know how to break efficiently, even with quantum computers.
 
 One major example is Kyber, now standardized by NIST as ML-KEM.
 
-[ON SCREEN:  
-Kyber / ML-KEM  
+[ON SCREEN:
+Kyber / ML-KEM
 post-quantum key exchange]
 
 It uses lattice-based cryptography.
 
-Which sounds like something you unlock after drinking too much coffee in grad school, but the idea is simple:
+Which sounds like something you unlock after drinking too much coffee in grad school.
+
+But the intuition is:
 
 finding the secret is like finding a very specific point in a massive high-dimensional grid.
 
 Classical computers hate it.
-Quantum computers do not get an obvious Shor-style shortcut.
+Quantum computers do not get an obvious Shor-style delete button.
 
-So instead of replacing the whole internet overnight, many systems use a hybrid exchange:
+The practical transition model is often hybrid cryptography.
 
-[ON SCREEN:  
-Elliptic Curve + Kyber  
+[ON SCREEN:
+Elliptic Curve + ML-KEM
 = hybrid key exchange]
 
-The old system is there because it is fast and battle-tested.
+The old system is there because it is fast, compact, and battle-tested.
 
 The new system is there because the old one has a quantum-shaped hole in it.
 
@@ -191,273 +339,72 @@ This is boring engineering.
 
 Which is exactly what you want when the alternative is "global key exchange incident."
 
-There are also hash-based signatures like SPHINCS+.
+There are also post-quantum signatures.
 
-These are built mostly on cryptographic hash functions, which are still believed to be relatively strong against quantum attacks.
+Some are lattice-based.
+Some are hash-based, like SPHINCS+ or XMSS-style systems.
 
-The tradeoff is that signatures can get larger and slower.
+Hashes are one of the most conservative building blocks in cryptography.
+
+Quantum computers weaken hash security somewhat with Grover's algorithm, but they do not get the same "uninstall the problem" shortcut that Shor gets against elliptic curves and factoring.
+
+The tradeoff is that post-quantum signatures can be bigger, slower, and less convenient.
 
 Because security is always just choosing where you want the pain.
 
-## 3:45 - What Changed
+That is also why companies like Google are rolling this out as hybrid cryptography.
 
-Now here is why the recent papers mattered.
+It is not free.
 
-We already knew Shor's algorithm could theoretically break RSA and elliptic curves.
+The handshake gets a little heavier.
 
-That was not the new part.
+That is where the browser and server agree on the secret key, using something like:
 
-The real question was:
+[ON SCREEN:
+ECDH + ML-KEM
+= hybrid handshake]
 
-[ON SCREEN:  
-how big does the machine need to be?]
+But after that, the actual data still moves through fast symmetric encryption like AES or ChaCha20.
 
-For years, the answer sounded like science fiction infrastructure.
+So the performance hit is real, but it is concentrated at the start of the connection, not paid on every byte forever.
 
-Millions of physical qubits.
-Huge error correction overhead.
-Attack circuits so large they felt more like thought experiments than engineering plans.
+And that is what protects against harvest now, decrypt later.
 
-Then researchers started optimizing.
+If someone records the encrypted traffic today, breaking the old elliptic-curve handshake later should not be enough, because the session secret also depended on the post-quantum half.
 
-Not by changing physics.
+No session secret, no bulk decryption.
 
-By making the attack cheaper.
+## 6:15 - Ethereum As The Stress Test
 
-The Google paper focused on the logical layer.
+Now take all of that and apply it to Ethereum.
 
-Meaning:
+Ethereum is what happens when post-quantum migration meets real users, real money, real infrastructure, and a decade of deployed assumptions.
 
-"How many error-corrected qubits and quantum operations would an optimized attack need?"
+At the execution layer, normal user accounts mostly use ECDSA over secp256k1.
 
-The target was secp256k1:
+[ON SCREEN:
+wallets
+ECDSA / secp256k1]
 
-[ON SCREEN:  
-secp256k1  
-Bitcoin / Ethereum / wallets]
+That is efficient and widely supported.
 
-That is the elliptic curve used by Bitcoin, Ethereum wallets, and a lot of blockchain infrastructure.
+It is also exactly the kind of elliptic curve signature scheme that a future Shor-capable machine threatens.
 
-Their estimate suggested that a sufficiently advanced quantum machine might need around:
+At the consensus layer, validators use BLS signatures.
 
-[ON SCREEN:  
-~1,000 logical qubits]
+[ON SCREEN:
+validators
+BLS signatures]
 
-Now pause.
+BLS has a superpower:
 
-This is where everyone gets confused.
+signature aggregation.
 
-A physical qubit is the actual hardware qubit.
+Thousands of validator signatures can be compressed into one small proof.
 
-Tiny. Fragile. Annoying.
+That is extremely useful when a global network needs to agree on blocks without shipping a phone book of signatures every few seconds.
 
-It loses information.
-It makes errors.
-It has the emotional stability of a production database on deploy day.
-
-A logical qubit is made by combining many physical qubits with error correction so the computer gets one more reliable qubit.
-
-[ON SCREEN:  
-many physical qubits  
--> 1 logical qubit]
-
-So when a paper says "1,000 logical qubits," that does not mean a laptop with 1,000 magic atoms.
-
-It means 1,000 reliable quantum workspaces, each backed by a lot of noisy hardware.
-
-Today, we are not sitting on 1,000 cryptographically useful logical qubits.
-
-The latest public milestones are closer to the 100-logical-qubit range, and even that comes with important asterisks.
-
-For example, Quantinuum's Helios system reported:
-
-[ON SCREEN:  
-Quantinuum Helios  
-94 error-detected logical qubits  
-48 error-corrected logical qubits]
-
-That is a serious milestone.
-
-It is also not the same thing as 1,000 high-quality logical qubits running a giant cryptographic attack circuit.
-
-So keep the comparison in logical qubits:
-
-[ON SCREEN:  
-today: ~100 logical qubits  
-paper estimate: ~1,000 logical qubits]
-
-Before these newer estimates, people often expected attacks against real public-key cryptography to need many thousands of logical qubits.
-
-Depending on the error-correction scheme, those logical qubits could translate into millions of noisy physical qubits.
-
-But logical qubits are the cleaner comparison.
-
-They are the "usable quantum computer" number.
-
-So the shock was not:
-
-"Quantum computers can break crypto."
-
-We knew that.
-
-The shock was:
-
-"Wait, the optimized secp256k1 attack might only need around 1,000 logical qubits?"
-
-That changes the room temperature.
-
-## 5:10 - Gates, Depth, and Why This Got Scary
-
-The same paper also reduced circuit depth.
-
-Circuit depth is basically:
-
-[ON SCREEN:  
-how many steps  
-must happen in sequence?]
-
-Quantum computers are fragile.
-
-The longer the computation runs, the more errors pile up.
-
-And if your computation needs to survive longer, each logical qubit has to be protected harder.
-
-Usually that means spending more physical qubits per logical qubit on error correction.
-
-So lower depth matters a lot.
-
-Then the paper estimated around:
-
-[ON SCREEN:  
-~100 million Toffoli gates]
-
-Which sounds insane.
-
-But in quantum attack math, that was surprisingly low.
-
-Now, what is a Toffoli gate?
-
-Because if you just learned that qubits matter, this sounds like the script introduced a second health bar.
-
-Qubits measure how big the machine is.
-
-Gates measure how much work it has to do.
-
-[ON SCREEN:  
-qubits = workspace  
-gates = operations]
-
-A Toffoli gate is basically a reversible building block for quantum arithmetic.
-
-Normal computers can throw information away.
-
-Quantum computers usually cannot.
-
-So when Shor's algorithm does arithmetic, it has to do it in this more careful reversible style.
-
-And Shor's algorithm needs a huge amount of that arithmetic:
-
-Multiplication.
-Modular exponentiation.
-All the cursed math that turns a public key into a private disaster.
-
-Toffoli gates are one standard way researchers count that workload.
-
-Because the machine does not just need enough logical qubits.
-
-It needs those qubits to survive millions of reliable math steps without the computation falling apart.
-
-Or, complete dummy version:
-
-[ON SCREEN:  
-Toffoli gates  
-= quantum math steps]
-
-So the real question is two-part:
-
-[ON SCREEN:  
-1. how many logical qubits?  
-2. how many reliable operations?]
-
-And when both numbers drop, the attack stops feeling like pure sci-fi.
-
-The paper estimated that if future hardware reaches the required scale, private key recovery could take:
-
-[ON SCREEN:  
-minutes  
-not years]
-
-That is the part that caused the panic.
-
-Not because the machine exists today.
-
-But because the theoretical attack cost moved hard in the wrong direction.
-
-## 6:25 - The Physical Qubit Paper
-
-Then the second paper attacked the problem from the hardware side.
-
-Not:
-
-"How do we optimize the algorithm?"
-
-But:
-
-"How do we build the machine more efficiently?"
-
-Instead of superconducting qubits, it looked at neutral atom quantum computers.
-
-Different architecture.
-Different tradeoffs.
-
-Slower operations, but potentially much better scaling.
-
-Their estimate suggested that around:
-
-[ON SCREEN:  
-~26,000 physical qubits]
-
-might theoretically be enough to break 256-bit elliptic curve cryptography under their assumptions.
-
-Older estimates often lived in the hundreds of thousands or millions of physical qubits.
-
-So researchers looked at this and basically said:
-
-"Okay, maybe the timeline is not as ridiculous as we hoped."
-
-And that is the real story.
-
-Not that the quantum apocalypse is here.
-
-But that the slope changed.
-
-The problem started looking less like impossible math and more like an engineering race.
-
-## 7:20 - Ethereum as the Example
-
-And Ethereum is a good example of how a serious ecosystem is reacting to this.
-
-Not by tweeting "quantum bad" and then going back to yield farming.
-
-Ethereum has an actual post-quantum roadmap.
-
-[ON SCREEN:  
-pq.ethereum.org  
-Post-Quantum Ethereum]
-
-And I am using Ethereum here because it is not just taking the threat seriously.
-
-It is arguably helping lead the industry research into what a real migration could look like.
-
-The important thing is that Ethereum has different cryptography at different layers.
-
-User wallets mostly use ECDSA over secp256k1.
-
-Validators use BLS signatures.
-
-Both are public-key signature systems.
-
-Both are the kind of thing a future cryptographically relevant quantum computer could attack.
+But BLS is also built on elliptic-curve assumptions.
 
 So Ethereum's problem is not:
 
@@ -465,163 +412,86 @@ So Ethereum's problem is not:
 
 The problem is:
 
-"How do you migrate a global decentralized protocol without breaking wallets, validators, bridges, apps, and every weird smart contract somebody deployed in 2017?"
+"How do you replace cryptography at multiple layers of a live decentralized protocol without breaking wallets, validators, bridges, apps, and every weird smart contract somebody deployed in 2017?"
 
-At the consensus layer, Ethereum's roadmap focuses on replacing BLS with hash-based signatures, specifically leanXMSS.
+This is why Ethereum is an interesting use case.
 
-[ON SCREEN:  
-BLS signatures  
--> leanXMSS]
+Post-quantum migration is not a blog post.
 
-This is interesting because leanXMSS is hash-based.
+It is a multi-year compatibility boss fight.
 
-Not lattice-based like Kyber.
+## 7:30 - What Ethereum Is Actually Exploring
 
-Why?
+Ethereum's public post-quantum roadmap is built around cryptographic agility.
 
-Because hashes are one of the oldest, simplest, and most conservative cryptographic building blocks we have.
+That means the protocol should become better at changing cryptography without requiring a civilization-level panic attack every time a primitive ages badly.
 
-Quantum computers do weaken hash security somewhat with Grover's algorithm.
+On the consensus side, the research direction includes replacing BLS with hash-based signatures, specifically leanXMSS.
 
-But they do not get the same "delete the problem" shortcut that Shor's algorithm gets against elliptic curves and factoring.
+[ON SCREEN:
+BLS
+-> hash-based signatures]
 
-So hash-based signatures are attractive when you want something boring, auditable, and built on assumptions cryptographers understand extremely well.
+Why hash-based?
 
-The downside is that post-quantum signatures are usually bigger.
+Because hashes are boring.
 
-And BLS has a superpower:
+And in cryptography, boring is a compliment.
 
-[ON SCREEN:  
-BLS = easy signature aggregation]
+They are old, simple, heavily studied, and not obviously destroyed by Shor's algorithm.
 
-Thousands of validator signatures can be compressed into one small proof.
+But hash-based signatures are bulkier.
 
-Hash-based signatures do not naturally do that.
+And they do not naturally give Ethereum the BLS aggregation trick.
 
-So Ethereum's plan is not just "swap BLS for hashes and call it a day."
+So the roadmap also explores proof-based aggregation, including leanVM and related work, to compress the heavy signature data.
 
-They are researching SNARK-based aggregation using a minimal zkVM called leanVM.
+[ON SCREEN:
+hash signatures
++ proof aggregation
+= maybe scalable PQ consensus]
 
-[ON SCREEN:  
-hash signatures  
-+ SNARK aggregation  
-= scalable PQ consensus]
+Developer translation:
 
-Basically:
+Ethereum cannot just swap a signature scheme like changing a CSS variable.
 
-Use hash-based signatures for quantum resistance.
+If signatures get bigger, blocks get heavier.
+If validation gets slower, nodes suffer.
+If migration is awkward, users lose funds.
+If old accounts are left behind, attackers get a museum of valuable cryptographic fossils.
 
-Then use proofs to compress the heavy stuff so the network does not choke on it.
+On the execution layer, the story is more gradual.
 
-On the execution layer, the roadmap is more about cryptographic agility.
+[ON SCREEN:
+account abstraction
+PQ signature precompiles
+opt-in migration]
 
-That means account abstraction, post-quantum signature precompiles, and gradual opt-in migration instead of one terrifying flag day.
+Account abstraction can make accounts more flexible about how they authenticate.
 
-[ON SCREEN:  
-Execution layer: PQ sig precompiles  
-Consensus layer: PQ validator signatures  
-Data layer: PQ blobs]
+Post-quantum signature precompiles can make new verification methods cheaper and standardized.
 
-Their public roadmap roughly goes:
+And opt-in migration lets users and applications move before everything has to move at once.
 
-- PQ key registry
-- PQ signature precompiles
-- PQ attestations and real-time consensus proofs
-- PQ signature aggregation and PQ blobs
-- eventually, full post-quantum consensus and transactions
+The rough shape is:
 
-The timeline is also refreshingly non-delusional.
+[ON SCREEN:
+wallets -> validators -> aggregation -> full migration]
 
-The Ethereum post-quantum team says the threat is probably not imminent.
+That is not sexy.
 
-But upgrading decentralized global infrastructure takes years.
+That is the point.
 
-Their current assessment is that L1 protocol upgrades could be completed by around 2029, with execution-layer migration taking additional years after that.
+Serious security work mostly looks like roadmaps, audits, testnets, formal verification, client implementations, and meetings where someone says "backwards compatibility" and everyone loses the will to live.
 
-And that is the point.
+## 10:00 - The Real Ending
 
-This is what "taking quantum seriously" looks like.
+The good news is that the industry is not asleep.
 
-Not panic.
-
-Not denial.
-
-Roadmaps, precompiles, account migration, formal verification, aggregation research, and years of boring coordination before the fire starts.
-
-## 8:45 - The Giant Disclaimer
-
-Now for the legally and intellectually necessary cold shower:
-
-[ON SCREEN:  
-NO, BITCOIN DOES NOT DIE TOMORROW]
-
-These are theoretical resource estimates.
-
-We do not currently have fault-tolerant quantum computers that can run these attacks in the real world.
-
-The remaining problems are brutal:
-
-- error correction
-- qubit stability
-- scaling
-- cooling
-- manufacturing
-- coherence time
-- connecting quantum systems
-
-Quantum computers are not just "GPUs but spooky."
-
-They are machines where the universe itself constantly tries to corrupt your state.
-
-But if attack costs keep dropping, post-quantum migration becomes urgent.
-
-Because migration is slow.
-
-Browsers, servers, wallets, hardware devices, government systems, old enterprise software, random embedded boxes that nobody has touched since 2014.
-
-All of it has to move.
-
-And if encrypted data is harvested today, it can be attacked later.
-
-[ON SCREEN:  
-steal now  
-decrypt later]
-
-That is why waiting for a working quantum attack is a terrible plan.
-
-## 9:45 - The Weird Censorship Problem
-
-There is also a darker side to all this.
-
-One of the papers reportedly used zero-knowledge proof techniques to show that certain optimizations existed without revealing every detail publicly.
-
-That raises a weird question:
-
-What happens when quantum attack research becomes strategically valuable?
-
-Do governments keep publishing the best techniques?
-
-Do companies?
-
-Or does the cutting edge disappear behind classification, NDAs, and "national security reasons"?
-
-Because once these attacks become practical enough to matter, the incentives change fast.
-
-Public cryptography research is how defenders prepare.
-
-Secret cryptography research is how attackers get a head start.
-
-And that is not a comfortable place to be.
-
-## 10:25 - The Good News
-
-The good news is that the industry is not completely asleep.
-
-NIST standardized post-quantum algorithms.
-Browsers are testing hybrid key exchange.
-Cloud providers are experimenting.
-Messaging apps are migrating.
-Crypto ecosystems are arguing loudly, which is technically their native language.
+NIST has standardized post-quantum algorithms.
+Browsers and cloud providers are testing hybrid key exchange.
+Messaging apps are already moving.
+Ethereum is researching what migration looks like when the system is public, decentralized, and allergic to downtime.
 
 This is already happening.
 
@@ -629,9 +499,15 @@ The question is whether it happens fast enough.
 
 Because the worst version of Q-Day is not a glowing quantum computer in a villain lab.
 
-It is a boring calendar problem.
+It is a boring calendar bug.
 
-The hardware arrives before the migration finishes.
+[ON SCREEN:
+hardware arrives
+before migration finishes]
+
+The machine does not need to break the whole internet in one dramatic montage.
+
+It only needs to arrive before enough critical systems have changed their locks.
 
 That is why these papers matter.
 
@@ -645,4 +521,6 @@ So will quantum break the world computer?
 
 Eventually, maybe.
 
-But the bigger question is whether we patch the world computer before it gets the chance.
+But the better question is:
+
+Will we patch the world computer before it gets the chance?
