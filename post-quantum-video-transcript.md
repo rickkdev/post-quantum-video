@@ -378,31 +378,41 @@ No session secret, no bulk decryption.
 
 Now take all of that and apply it to Ethereum.
 
-Ethereum is what happens when post-quantum migration meets real users, real money, real infrastructure, and a decade of deployed assumptions.
+Ethereum is a useful stress test because it is public, valuable, and always on.
 
-At the execution layer, normal user accounts mostly use ECDSA over secp256k1.
+There is no quiet maintenance window.
+
+If Ethereum ever has to move to post-quantum cryptography, the upgrade has to happen while wallets, validators, apps, and attackers are all online.
+
+Start with wallets.
+
+Most normal Ethereum accounts use ECDSA over secp256k1.
 
 [ON SCREEN:
 wallets
 ECDSA / secp256k1]
 
-That is efficient and widely supported.
+That is the same family of elliptic-curve cryptography we talked about earlier.
 
-It is also exactly the kind of elliptic curve signature scheme that a future Shor-capable machine threatens.
+It is efficient.
 
-At the consensus layer, validators use BLS signatures.
+It is widely supported.
+
+And a future Shor-capable quantum computer would threaten it.
+
+Now look at validators.
+
+Ethereum validators use BLS signatures.
 
 [ON SCREEN:
 validators
 BLS signatures]
 
-BLS has a superpower:
+BLS is useful because many validator signatures can be combined into one small proof.
 
-signature aggregation.
+That matters because Ethereum has a lot of validators.
 
-Thousands of validator signatures can be compressed into one small proof.
-
-That is extremely useful when a global network needs to agree on blocks without shipping a phone book of signatures every few seconds.
+Without aggregation, the network would have to move much more signature data around.
 
 But BLS is also built on elliptic-curve assumptions.
 
@@ -412,21 +422,20 @@ So Ethereum's problem is not:
 
 The problem is:
 
-"How do you replace cryptography at multiple layers of a live decentralized protocol without breaking wallets, validators, bridges, apps, and every weird smart contract somebody deployed in 2017?"
+"How do you replace cryptography in a live financial system without breaking everything built on top of it?"
 
-This is why Ethereum is an interesting use case.
+That is the hard part:
 
-Post-quantum migration is not a blog post.
-
-It is a multi-year compatibility boss fight.
+not just new math,
+but a live upgrade.
 
 ## 7:30 - What Ethereum Is Actually Exploring
 
-Ethereum's public post-quantum roadmap is built around cryptographic agility.
+Ethereum's public post-quantum work is about flexibility.
 
-That means the protocol should become better at changing cryptography without requiring a civilization-level panic attack every time a primitive ages badly.
+The goal is to make the system better at changing cryptography before there is an emergency.
 
-On the consensus side, the research direction includes replacing BLS with hash-based signatures, specifically leanXMSS.
+On the validator side, one research direction is hash-based signatures, like leanXMSS.
 
 [ON SCREEN:
 BLS
@@ -434,33 +443,33 @@ BLS
 
 Why hash-based?
 
-Because hashes are boring.
+Hashes are old, simple, and heavily studied.
 
-And in cryptography, boring is a compliment.
+Shor's algorithm does not break them the way it breaks elliptic curves.
 
-They are old, simple, heavily studied, and not obviously destroyed by Shor's algorithm.
+The tradeoff is size.
 
-But hash-based signatures are bulkier.
+Hash-based signatures are bigger than today's BLS signatures.
 
-And they do not naturally give Ethereum the BLS aggregation trick.
+They also do not automatically give Ethereum the same aggregation trick.
 
-So the roadmap also explores proof-based aggregation, including leanVM and related work, to compress the heavy signature data.
+So researchers are also exploring proof-based aggregation, including leanVM and related work.
 
 [ON SCREEN:
 hash signatures
 + proof aggregation
-= maybe scalable PQ consensus]
+= smaller data]
 
 Developer translation:
 
-Ethereum cannot just swap a signature scheme like changing a CSS variable.
+Ethereum cannot just swap one signature scheme for another and call it done.
 
 If signatures get bigger, blocks get heavier.
 If validation gets slower, nodes suffer.
-If migration is awkward, users lose funds.
-If old accounts are left behind, attackers get a museum of valuable cryptographic fossils.
+If migration is confusing, users make mistakes.
+If old accounts are left behind, they stay vulnerable.
 
-On the execution layer, the story is more gradual.
+For wallets, the path is more gradual.
 
 [ON SCREEN:
 account abstraction
@@ -469,20 +478,23 @@ opt-in migration]
 
 Account abstraction can make accounts more flexible about how they authenticate.
 
-Post-quantum signature precompiles can make new verification methods cheaper and standardized.
+Post-quantum signature precompiles can make new verification methods cheaper to use.
 
-And opt-in migration lets users and applications move before everything has to move at once.
+Opt-in migration lets users and apps move before the whole network has to move at once.
 
 The rough shape is:
 
 [ON SCREEN:
 wallets -> validators -> aggregation -> full migration]
 
-That is not sexy.
+That is the real work:
 
-That is the point.
-
-Serious security work mostly looks like roadmaps, audits, testnets, formal verification, client implementations, and meetings where someone says "backwards compatibility" and everyone loses the will to live.
+new account types,
+new verification tools,
+validator changes,
+testnets,
+audits,
+and a long migration period.
 
 ## 10:00 - The Real Ending
 
